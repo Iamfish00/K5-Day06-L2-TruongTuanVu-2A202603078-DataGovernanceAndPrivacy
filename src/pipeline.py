@@ -85,11 +85,11 @@ def decide(ctx: RunContext, final: pd.DataFrame) -> Decision:
 
 
 def run(ctx: RunContext) -> None:
-    spec = get_track(ctx.track)
-    data = load(ctx)
-    scored = process(ctx, data)
-    ctx.stats["n_items"] = len(scored)
-    queue = rank(ctx, scored)
-    final = review(ctx, scored, queue)
-    final[spec.pred_columns + [c for c in final.columns if c not in spec.pred_columns]].to_csv(ctx.out(spec.pred_file), index=False)
-    write_decision(decide(ctx, final), ctx.out("decision.json"), ctx.out("decision_log.csv"))
+    from .tracks import REGISTRY
+    mod = REGISTRY.get(ctx.track)
+    if mod is None:
+        spec = get_track(ctx.track)
+        raise NotImplementedError(
+            f"Implement process() for {spec.track} ({spec.title}). It must produce a DataFrame with at least "
+            f"{spec.pred_columns} (saved as out/{spec.pred_file}). See docs/tracks/{spec.track.upper()}.md")
+    mod.run(ctx)
