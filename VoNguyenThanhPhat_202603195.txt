@@ -1,0 +1,4 @@
+.\.venv\Scripts\python.exe -m src.main --pipeline src.pipeline_t12 --config configs/lab_t12.yaml --track t12 --output out/poc --run-name poc --offline --seed 42
+
+Chạy lệnh trên để chạy đúng file 
+
