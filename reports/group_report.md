@@ -8,10 +8,10 @@
 
 | Mục | Giá trị |
 |---|---|
-| Group ID | G__ |
-| Challenge | T__ · ______________________ |
-| Thành viên (5–6) + vai trò | 1. ____ (Lead/Integrator) · 2. ____ (Data & fixtures) · 3. ____ (Core algorithm) · 4. ____ (QA/metric) · 5. ____ (Review + report) · 6. ____ |
-| Git URL | ____ |
+| Group ID | G04 |
+| Challenge | T06 · Semantic Integrity & Provenance Gate · T07 · Face/Plate Redaction + Review Queue · T08 · Retention & Delete Request Simulator |
+| Thành viên (5–6) + vai trò | 1. Đặng Minh Huy — MSSV 2A202603162 (thực thi toàn bộ: Lead/Integrator, core algorithm T06–T08, baseline, tests, review + report) |
+| Git URL | https://github.com/Iamfish00/K5-Day06-L2-TruongTuanVu-2A202603078-DataGovernanceAndPrivacy |
 | Tag `demo-180m` (commit) | ____ |
 | Tag `final-24h` (commit) | ____ |
 | Deadline (giờ VN) | ____ |
@@ -131,3 +131,32 @@ pytest -q
 - [ ] Có baseline/PoC metrics, ≥1 failure case, reviewer evidence, decision log.
 - [ ] Có license/source provenance, data splits, seed, offline environment, GT/eval N.
 - [ ] Mỗi thành viên có ≥1 commit thực chất và được nêu minh bạch trong bảng trên.
+
+## 12 · Execution summary — người thực thi: Đặng Minh Huy (Dang Minh Huy), MSSV 2A202603162, nhóm G04
+
+Ba challenge đã cài đầy đủ 5 bước contract (load → process → rank → review → decide) trong
+`src/tracks/` (dispatch từ `src/pipeline.py`):
+
+| Track | PoC module | Thuật toán | Output |
+|---|---|---|---|
+| T06 | `src/tracks/t06_gate.py` | So invariant semantic với parent `releases/v1.0` + lịch sử label map: trùng ID, category so với label map khai báo (stale_map / class_swap), frame rơi / `frame_index` đứt quãng, bbox dịch chuyển có hệ thống (ngưỡng chốt trước: ≥10% box chung dịch, mean ≥3 px; jitter lành tính <1 px), sha256 parent | `out/t06/poc/release_decisions.csv` (+ `release_report.json` máy đọc được) |
+| T07 | `src/tracks/t07_redaction.py` | Detector CPU không weights: khớp palette da tổng hợp (ngày + đêm) → blob mặt (kèm heuristic mắt-thấp = mặt bị che → nới box xuống); rectangle sáng = biển số `SYN-…`; pad 2 px; blur Gaussian vùng che; queue ưu tiên vùng nhỏ/tối/bị che | `out/t07/poc/redactions.csv`, `out/t07/poc/redacted/*.jpg`, `contact_sheet.html` |
+| T08 | `src/tracks/t08_deletion.py` | BFS lineage (raw → backup/frame/crop/embedding/export) theo `subject_ids` + `parent_ids`; chuỗi ưu tiên chốt trước: legal hold → retain_legal_hold, unknown origin / ACL thiếu owner → escalate, đa chủ thể → escalate, còn lại delete; mọi hành động ghi `audit_log.jsonl` | `out/t08/poc/actions.csv`, `deletion_evidence.csv` |
+
+Baseline tầm thường (docs §4) trong `src/tracks/baselines.py`: T06 chỉ parse schema (mọi release PASS),
+T07 detector màu thô (da YCrCb + pixel sáng, pad cố định — OpenCV 5.0 đã bỏ API Haar cascade) + blur cố định không queue (và mode `blur_all` = baseline tầm thường phải báo: miss rate 0 nhưng over-redaction = 1 → guardrail FAIL),
+T08 chỉ xóa 1 raw theo filename, bỏ qua derived/backup.
+
+Lệnh chạy (offline, seed 42):
+
+```bash
+.venv\Scripts\python.exe -m src.main --track t06 --output out/t06/poc --run-name poc --offline --seed 42
+.venv\Scripts\python.exe -m src.main --track t07 --output out/t07/poc --run-name poc --offline --seed 42
+.venv\Scripts\python.exe -m src.main --track t08 --output out/t08/poc --run-name poc --offline --seed 42
+.venv\Scripts\python.exe -m src.main --track t06 --pipeline src.tracks.baselines --output out/t06/baseline --run-name baseline --offline --seed 42   # t07/t08 tương tự
+```
+
+Metrics chấm chính thức (`src.evaluate`) cần `fixtures/*/gt/` của overlay giảng viên — repo học viên
+không có gt/ nên số liệu primary sẽ do giảng viên chạy; nhóm tự kiểm bằng test đơn vị
+(`tests/test_group_pipelines.py`: 9 case success + failure/edge cho cả 3 track) và review thủ công
+contact sheet T07. Ngưỡng/tham số đều chốt trước khi có bất kỳ kết quả eval nào (không có gt để tune).
