@@ -1,0 +1,27 @@
+{
+  "track": "t12",
+  "run_name": "poc",
+  "status": 0,
+  "seed": 42,
+  "offline": true,
+  "input": "fixtures\\t12_vendor_batches",
+  "output": "out\\poc_t12",
+  "pipeline": "src.pipeline_t12",
+  "config_hash": "2d8f6c52f458",
+  "git_sha": "2ebaaaf",
+  "runtime_seconds": 0.043,
+  "stats": {
+    "label_source": "none",
+    "n_items": 5
+  },
+  "machine": {
+    "python": "3.13.17",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 141 Stepping 1, GenuineIntel"
+  },
+  "output_check": {
+    "pred_file": "out\\poc_t12\\batch_decisions.csv",
+    "exists": true,
+    "missing_columns": []
+  }
+}

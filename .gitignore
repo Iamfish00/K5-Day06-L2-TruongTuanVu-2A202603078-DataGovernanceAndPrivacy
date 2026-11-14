@@ -15,7 +15,8 @@ data/cache/
 **/hidden_eval/
 
 # Run outputs
-out/
+out/baseline
+out/poc
 runs/
 *.log
 

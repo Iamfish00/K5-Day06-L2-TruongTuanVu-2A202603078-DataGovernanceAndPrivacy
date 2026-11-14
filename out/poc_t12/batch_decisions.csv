@@ -1,0 +1,6 @@
+batch_id,est_error_rate,decision,n_audited,ci_low,ci_high,k_errors,p_accept_test,reason,score
+V1,,HOLD,0,,,,,NO_AUDIT_LABELS,1.0
+V2,,HOLD,0,,,,,NO_AUDIT_LABELS,1.0
+V3,,HOLD,0,,,,,NO_AUDIT_LABELS,1.0
+V4,,HOLD,0,,,,,NO_AUDIT_LABELS,1.0
+V5,,HOLD,0,,,,,NO_AUDIT_LABELS,1.0
