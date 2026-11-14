@@ -85,6 +85,9 @@ def decide(ctx: RunContext, final: pd.DataFrame) -> Decision:
 
 
 def run(ctx: RunContext) -> None:
+    if ctx.track == "t09":
+        from .t09 import run as run_t09
+        return run_t09(ctx)
     spec = get_track(ctx.track)
     data = load(ctx)
     scored = process(ctx, data)
