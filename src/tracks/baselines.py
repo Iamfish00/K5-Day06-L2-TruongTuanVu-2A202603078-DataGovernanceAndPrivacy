@@ -115,7 +115,15 @@ def _run_t08(ctx: RunContext) -> None:
 
 
 def run(ctx: RunContext) -> None:
-    {"t06": _run_t06, "t07": _run_t07, "t08": _run_t08}[ctx.track](ctx)
+    if ctx.track == "t12":
+        from dataclasses import replace
+
+        from ..pipeline_t12 import run as run_t12
+
+        params = {**(ctx.config.get("params") or {}), "pipeline_t12_sampling": "random"}
+        run_t12(replace(ctx, config={**ctx.config, "params": params}))
+    else:
+        {"t06": _run_t06, "t07": _run_t07, "t08": _run_t08}[ctx.track](ctx)
     spec = get_track(ctx.track)
     ctx.stats["baseline"] = True
     ctx.stats["pred_file"] = spec.pred_file

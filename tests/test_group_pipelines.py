@@ -151,3 +151,24 @@ def test_t08_lineage_closure_includes_children():
             _art("other", subj=("s2",))]
     closed = t08_deletion.lineage_closure(arts, {"raw"})
     assert closed == {"raw", "emb"}
+
+
+def test_t12_no_labels_holds_and_rework_does_not_release(tmp_path):
+    import pandas as pd
+
+    from src.main import main
+
+    args = ["--config", "configs/lab_t12.yaml", "--track", "t12",
+            "--output", str(tmp_path), "--offline", "--seed", "42"]
+    assert main(args) == 0
+    plan = pd.read_csv(tmp_path / "audit_sample.csv")
+    assert plan.sample_id.is_unique and plan.groupby("batch_id").size().to_dict() == {
+        "V1": 20, "V2": 20, "V3": 20, "V4": 20, "V5": 20,
+    }
+    summary = lambda: json.loads((tmp_path / "decision.json").read_text(encoding="utf-8"))
+    assert summary()["reason_code"] == "NO_AUDIT_LABELS"
+    plan[["sample_id"]].assign(is_error=1).to_csv(tmp_path / "audit_labels.csv", index=False)
+    assert main(args) == 0
+    outputs = pd.read_csv(tmp_path / "batch_decisions.csv")
+    assert outputs.decision.eq("REWORK").all() and outputs.n_audited.eq(20).all()
+    assert summary()["status"] == "REWORK"

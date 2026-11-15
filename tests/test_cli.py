@@ -14,11 +14,43 @@ from src.common.gt_guard import GroundTruthAccessError, disable_gt_guard, enable
 from src.common.offline import NetworkBlockedError, disable_offline_guard, enable_offline_guard
 
 
-def test_template_pipeline_fails_clearly_not_silently(tmp_path):
-    rc = runner.main(["--track", "t02", "--output", str(tmp_path), "--offline"])
+def test_unsupported_track_fails_clearly_not_silently(tmp_path):
+    rc = runner.main(["--track", "t04", "--output", str(tmp_path), "--offline"])
     assert rc == 3                                   # NotImplemented -> explicit exit code
     info = json.loads((tmp_path / "run_info.json").read_text())
     assert info["status"] == 3 and info["seed"] == 42
+
+
+
+def test_t02_ranked_output_and_eval_review_budget(tmp_path):
+    assert runner.main(["--track", "t02", "--output", str(tmp_path), "--offline"]) == 0
+    metadata = pd.read_csv("fixtures/t02_raw_qc/images.csv")
+    ranked = pd.read_csv(tmp_path / "ranked_review.csv")
+    queue = pd.read_csv(tmp_path / "review_queue.csv")
+    expected = ranked[ranked.split.eq("eval")].head(20)
+
+    assert ranked.image_id.is_unique
+    assert set(ranked.image_id) == set(metadata.image_id)
+    assert ranked.score.notna().all() and ranked.score.is_monotonic_decreasing
+    assert len(queue) == 20 and queue.item_id.tolist() == expected.image_id.tolist()
+    assert "data:image/jpeg;base64," in (tmp_path / "contact_sheet.html").read_text(encoding="utf-8")
+    decision = json.loads((tmp_path / "decision.json").read_text(encoding="utf-8"))
+    assert decision["reason_code"] == "REVIEW_PENDING"
+
+
+def test_t02_unreadable_image_returns_input_error(tmp_path, capsys):
+    fixture = tmp_path / "fixture"
+    fixture.mkdir()
+    (fixture / "broken.jpg").write_bytes(b"not a JPEG")
+    (fixture / "images.csv").write_text(
+        "image_id,path,camera_id,light,split\nbroken,broken.jpg,cam_A,day,dev\n"
+    )
+    config = tmp_path / "t02.yaml"
+    config.write_text("track: t02\nstrict_provenance: false\n")
+    out = tmp_path / "output"
+    assert runner.main(["--config", str(config), "--input", str(fixture), "--output", str(out), "--offline"]) == 2
+    assert "Unreadable image: broken" in capsys.readouterr().err
+    assert not (out / "ranked_review.csv").exists()
 
 
 def _run_baseline(out):

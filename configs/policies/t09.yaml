@@ -1,0 +1,87 @@
+# T09 educational triage policy. This file is authored for the lab, not supplied GT.
+# A rule match is a review flag, not a legal conclusion. DPO/legal signs off.
+policy_version: t09-1.0
+effective_date: '2026-11-14'
+rules:
+  - id: EU-TRANSFER-MECHANISM
+    markets: [EU]
+    when: "transfer.cross_border and transfer.mechanism in [null, 'unknown', 'none']"
+    decision: HOLD
+    reason_code: XBORDER_NO_MECHANISM
+    source: {document: GDPR, provision: 'Chapter V, Articles 44–49', url: 'https://eur-lex.europa.eu/eli/reg/2016/679/oj/eng/'}
+  - id: EU-BASIS-UNKNOWN
+    markets: [EU]
+    when: "lawful_basis in [null, 'unknown', 'none']"
+    decision: HOLD
+    reason_code: NO_LAWFUL_BASIS
+    source: {document: GDPR, provision: 'Article 6', url: 'https://eur-lex.europa.eu/eli/reg/2016/679/oj/eng/'}
+  - id: EU-HIGH-RISK-DPIA-REVIEW
+    markets: [EU]
+    when: "'in_cabin_video' in data_types and not dpia_done"
+    decision: HOLD
+    reason_code: DPIA_MISSING
+    needs_legal_review: true
+    source: {document: GDPR, provision: 'Article 35; applicability requires review', url: 'https://eur-lex.europa.eu/eli/reg/2016/679/oj/eng/'}
+  - id: VN-BASIS-REVIEW
+    markets: [VN]
+    when: "lawful_basis in [null, 'unknown', 'legitimate_interest']"
+    decision: HOLD
+    reason_code: NO_LAWFUL_BASIS
+    needs_legal_review: true
+    source: {document: 'Luật 91/2025/QH15', provision: 'Articles 9 and 19; assess any applicable exception', url: 'https://congbao.chinhphu.vn/van-ban/luat-so-91-2025-qh15-45578/57730.htm'}
+  - id: VN-TRANSFER-ASSESSMENT
+    markets: [VN]
+    when: "transfer.cross_border and not transfer.transfer_impact_assessment"
+    decision: HOLD
+    reason_code: XBORDER_NO_IMPACT_ASSESSMENT
+    needs_legal_review: true
+    source: {document: 'Luật 91/2025/QH15', provision: 'Article 20; check paragraph 6 exceptions', url: 'https://congbao.chinhphu.vn/van-ban/luat-so-91-2025-qh15-45578/57730.htm'}
+  - id: VN-CONSENT-QUALITY
+    markets: [VN]
+    when: "lawful_basis == 'consent' and (not consent.granular or not consent.withdrawable)"
+    decision: REWORK
+    reason_code: CONSENT_INVALID
+    needs_legal_review: true
+    source: {document: 'Luật 91/2025/QH15', provision: 'Articles 9–10', url: 'https://congbao.chinhphu.vn/van-ban/luat-so-91-2025-qh15-45578/57730.htm'}
+  - id: CONSENT-NOT-OBTAINED
+    markets: ['*']
+    when: "lawful_basis == 'consent' and not consent.obtained"
+    decision: HOLD
+    reason_code: CONSENT_RECORD_MISSING
+    source: {document: 'Internal lab gate', provision: 'Claimed consent has no obtained evidence'}
+  - id: CONSENT-RECORD-MISSING
+    markets: ['*']
+    when: "consent.obtained and not consent.record_available"
+    decision: REWORK
+    reason_code: CONSENT_RECORD_MISSING
+    source: {document: 'Internal lab gate', provision: 'Document consent evidence'}
+  - id: NOTICE-MISSING
+    markets: ['*']
+    when: "not notice_given"
+    decision: REWORK
+    reason_code: NOTICE_MISSING
+    source: {document: 'Internal lab gate', provision: 'Notice check; market applicability requires review'}
+  - id: RETENTION-UNDEFINED
+    markets: ['*']
+    when: "retention_days is null"
+    decision: REWORK
+    reason_code: RETENTION_UNBOUNDED
+    source: {document: 'Internal lab gate', provision: 'Document retention period'}
+  - id: RETENTION-LONG
+    markets: ['*']
+    when: "retention_days > 365"
+    decision: REWORK
+    reason_code: RETENTION_EXCESSIVE
+    source: {document: 'Internal lab gate', provision: '365 days is a lab review threshold, not a statutory limit'}
+  - id: RAW-FACE-CLOUD
+    markets: ['*']
+    when: "storage.raw_retained and storage.location == 'cloud' and 'face' in data_types"
+    decision: HOLD
+    reason_code: RAW_PII_IN_CLOUD
+    source: {document: 'Internal lab gate', provision: 'Escalate raw face data stored in cloud'}
+  - id: RAW-NO-ENCRYPTION
+    markets: ['*']
+    when: "storage.raw_retained and not storage.encryption_at_rest"
+    decision: HOLD
+    reason_code: NO_ENCRYPTION
+    source: {document: 'Internal lab gate', provision: 'Escalate raw storage without encryption'}

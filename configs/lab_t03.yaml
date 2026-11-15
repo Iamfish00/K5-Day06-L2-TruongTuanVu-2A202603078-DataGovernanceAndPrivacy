@@ -1,0 +1,23 @@
+
+# ============================================================
+# Group config — T03 Synthetic-vs-Real
+# ============================================================
+
+group_id: G04
+owner: "Ha Thanh Tung - T03 Pipeline Developer and Reviewer"
+# Challenge selection
+track_config: tracks/t03.yaml
+track: t03
+
+# Input and output
+input: fixtures/t03_synthetic
+output: out/t03/poc
+
+# Reproducibility
+seed: 42
+offline: true
+strict_provenance: true
+
+# Track params (merged over track_config.params).
+# Freeze before evaluation.
+params: {}
