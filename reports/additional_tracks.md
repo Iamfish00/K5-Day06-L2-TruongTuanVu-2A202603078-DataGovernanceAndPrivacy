@@ -1,6 +1,6 @@
 # Day06 · Các track T04, T05, T10, T11, T13 và T14
 
-Sáu PoC bổ sung được triển khai với hỗ trợ Codex theo yêu cầu của Trương Tuấn Vũ. Cấu hình nộp chính của G04 vẫn là T01. Mỗi track mới chạy với fixture đi kèm, kiểm SHA-256 từ manifest, seed 42 và chế độ offline.
+Cấu hình nộp chính của G04 là T01. Sáu PoC bổ sung chạy với fixture đi kèm, kiểm SHA-256 từ manifest, seed 42 và chế độ offline.
 
 | Track | PoC | Baseline | Kết quả chạy trên fixture |
 |---|---|---|---|

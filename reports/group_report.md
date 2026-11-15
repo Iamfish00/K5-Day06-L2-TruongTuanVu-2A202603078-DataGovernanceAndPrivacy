@@ -35,7 +35,7 @@
 ## 03 · Research & design
 
 - Kiểm manifest → ghép clip với ô mục tiêu → chọn clip theo trọng số tăng thêm → đưa 3 ô cần xem xét vào hàng đợi → ghi quyết định và kế hoạch quay.
-- Ý tưởng greedy set cover cung cấp phương pháp chọn ô chưa được phủ. BDD100K minh họa cách phân tích độ đa dạng bối cảnh lái xe qua điều kiện môi trường. [Chvátal](https://doi.org/10.1287/moor.4.3.233) · [Yu và cộng sự](https://arxiv.org/abs/1805.04687)
+- Greedy set cover ưu tiên clip bổ sung các ô chưa được phủ theo tổng trọng số.
 - PoC phá hòa theo thứ tự kịch bản chưa chọn, chi phí thấp hơn và `clip_id`. Cách này giữ mục tiêu tăng độ phủ ở từng bước và có thể giảm trùng hoặc giảm chi phí. Greedy đưa ra một phương án theo từng bước, chưa chứng minh tối ưu toàn cục.
 - Chạy offline bằng CPU, đọc CSV và dùng quy tắc cố định. Không có model hay checkpoint.
 
@@ -96,7 +96,7 @@ Hàng đợi `out/poc/review_queue.csv` đưa ô còn thiếu lên trước, sau
 | C09 | Xác minh `clip_108`. Nếu không đạt, thu một clip dự phòng về xe máy trong đô thị trời mưa ban đêm. | | `approve` |
 
 - Lưu quyết định thành `out/poc/review_queue_reviewed.csv`. Với `edit`, nhập hành động mới vào `override_value`. Sau khi chạy lại, pipeline ghi `audit_log.jsonl` và áp dụng thay đổi vào `capture_plan.csv` của ô thiếu.
-- Pipeline đã ghi ba quyết định vào `audit_log.jsonl`. Kết quả `REWORK / COVERAGE_GAPS` vì C13 và C15 còn thiếu clip theo metadata. Bản rà dựa trên metadata do Codex điền theo yêu cầu của Trương Tuấn Vũ. C09 giữ `clip_108` theo CSV và chưa xác minh bằng video. [Bảng review](review_queue.csv) · [Nhật ký quyết định](decision_log.csv)
+- Pipeline đã ghi ba quyết định vào `audit_log.jsonl`. Kết quả `REWORK / COVERAGE_GAPS` vì C13 và C15 còn thiếu clip theo metadata. Bản rà thử dựa trên metadata. Các ô xác nhận vẫn để trống. C09 giữ `clip_108` theo CSV và chưa xác minh bằng video. [Bảng review](review_queue.csv) · [Nhật ký quyết định](decision_log.csv)
 
 ## 08 · Reproduce & tests
 
@@ -131,8 +131,6 @@ Phần T12 của G08 có báo cáo riêng. [Báo cáo T12](t12_report.md) · [B�
 
 ## 11 · References
 
-| Nguồn | Ngày xem | Dùng trong lab |
+| URL | Ngày xem | 1–2 dòng ý nghĩa (không chép nguyên văn) |
 |---|---|---|
-| [Chvátal, A Greedy Heuristic for the Set-Covering Problem](https://doi.org/10.1287/moor.4.3.233) | 2026-11-14 | Tham khảo cách chọn theo tập ô chưa phủ và chi phí. |
-| [Yu và cộng sự, BDD100K](https://arxiv.org/abs/1805.04687) | 2026-11-14 | Tham khảo ý nghĩa của đa dạng bối cảnh trong dữ liệu lái xe. |
-| [Đề T01](../docs/tracks/T01.md) | 2026-11-14 | Quy định input, ngân sách, output và cách đo coverage. |
+| | | |

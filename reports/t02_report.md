@@ -40,9 +40,9 @@ Trang `out/t02/poc/contact_sheet.html` hiển thị 20 ảnh, điểm, tín hi�
 - `RECAPTURE` khi đã duyệt đủ và còn ảnh được yêu cầu thu lại.
 - `KEEP` khi đã duyệt đủ và mọi ảnh trong hàng đợi được giữ.
 
-Codex rà trực quan 20 ảnh trong hàng đợi theo yêu cầu của Trương Tuấn Vũ. Kết quả rà ảnh là **17 `RECAPTURE` và 3 `KEEP`**. Có ba ảnh được đổi từ `KEEP` sang `RECAPTURE` vì nhiễu khối hoặc mất chi tiết ở biên đối tượng (`img_13_2`, `img_16_3`, `img_03_3`). Hai ảnh đêm `img_06_0`, `img_06_1` và ảnh ngày `img_23_0` được giữ vì các đối tượng chính còn rõ.
+Bản rà thử trên 20 ảnh trong hàng đợi ghi nhận **17 `RECAPTURE` và 3 `KEEP`**. Có ba ảnh được đổi từ `KEEP` sang `RECAPTURE` vì nhiễu khối hoặc mất chi tiết ở biên đối tượng (`img_13_2`, `img_16_3`, `img_03_3`). Hai ảnh đêm `img_06_0`, `img_06_1` và ảnh ngày `img_23_0` được giữ vì các đối tượng chính còn rõ.
 
-Chạy lại offline đạt `status=0`, ghi 20 lượt duyệt vào `audit_log.jsonl` và trả quyết định `RECAPTURE / CONFIRMED_IMAGE_DEFECTS` cho hàng đợi. Các quyết định và lý do từng ảnh được lưu trong báo cáo dưới dạng CSV. Nhật ký quyết định gồm trạng thái trước và sau khi nạp bản rà ảnh của Codex. [Bảng rà ảnh](t02_review_queue.csv) · [Nhật ký quyết định](t02_decision_log.csv) Lượt rà này đánh giá độ rõ của 20 ảnh ưu tiên. Recall@20 và Precision@20 chính thức chờ bộ nhãn xác minh.
+Chạy lại offline đạt `status=0`, ghi 20 lượt duyệt vào `audit_log.jsonl` và trả quyết định `RECAPTURE / CONFIRMED_IMAGE_DEFECTS` cho hàng đợi. Các quyết định và lý do từng ảnh được lưu trong báo cáo dưới dạng CSV. Nhật ký quyết định gồm trạng thái trước và sau khi nạp bản rà thử. [Bảng rà ảnh](t02_review_queue.csv) · [Nhật ký quyết định](t02_decision_log.csv) Lượt rà này đánh giá độ rõ của 20 ảnh ưu tiên. Recall@20 và Precision@20 chính thức chờ bộ nhãn xác minh.
 
 ## Kiểm tra 10 ảnh ngoài miền
 
@@ -63,7 +63,7 @@ Kết quả mô tả hành động gợi ý trên 10 mẫu kiểm tra. Điểm l
 .\.venv\Scripts\python.exe -m pytest -o addopts="" -q
 ```
 
-Để tái lập lượt rà sau khi chạy PoC lần đầu, chép `reports/t02_review_queue.csv` vào `out/t02/poc/review_queue_reviewed.csv` rồi chạy lại lệnh PoC ở trên. Bản rà do Codex thực hiện và cần người duyệt xác nhận nếu lớp yêu cầu chữ ký của học viên.
+Để tái lập lượt rà sau khi chạy PoC lần đầu, chép `reports/t02_review_queue.csv` vào `out/t02/poc/review_queue_reviewed.csv` rồi chạy lại lệnh PoC ở trên. Bản rà thử chưa có xác nhận của người duyệt.
 
 Kiểm thử trên máy gồm 51 đạt, 39 bỏ qua và 0 lỗi. Hai test T02 xác minh đầu ra, ngân sách theo eval và lỗi ảnh hỏng.
 
