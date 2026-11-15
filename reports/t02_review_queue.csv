@@ -1,0 +1,21 @@
+﻿rank,item_id,score,reason,suggested_action,slice,evidence_path,reviewer,reviewer_decision,override_value,review_note,reviewed_at
+1,img_13_3,152.429154,blur,RECAPTURE,night,images/img_13_3.jpg,Codex (rà ảnh theo yêu cầu của Trương Tuấn Vũ),approve,,"Mờ toàn ảnh. Vùng xe, đèn và người đi bộ bị nhòe, khó tách đường viền.",2026-11-14T09:18:28+00:00
+2,img_19_3,74.271713,blur,RECAPTURE,day,images/img_19_3.jpg,Codex (rà ảnh theo yêu cầu của Trương Tuấn Vũ),approve,,"Viền xe và người đi bộ mềm rõ, biển số mất chi tiết.",2026-11-14T09:18:28+00:00
+3,img_16_2,69.742938,blur,RECAPTURE,day,images/img_16_2.jpg,Codex (rà ảnh theo yêu cầu của Trương Tuấn Vũ),approve,,Đường viền xe xanh và vạch giữa đường bị nhòe.,2026-11-14T09:18:28+00:00
+4,img_15_2,40.703642,blur,RECAPTURE,dusk,images/img_15_2.jpg,Codex (rà ảnh theo yêu cầu của Trương Tuấn Vũ),approve,,Mờ mạnh trên cả cảnh. Các xe sát nhau khó phân biệt.,2026-11-14T09:18:28+00:00
+5,img_15_3,14.296769,dark,RECAPTURE,dusk,images/img_15_3.jpg,Codex (rà ảnh theo yêu cầu của Trương Tuấn Vũ),approve,,"Nền đường và vật thể chìm vào vùng tối, mất chi tiết quanh xe.",2026-11-14T09:18:28+00:00
+6,img_23_3,12.774488,dark,RECAPTURE,day,images/img_23_3.jpg,Codex (rà ảnh theo yêu cầu của Trương Tuấn Vũ),approve,,"Cảnh có tag day nhưng ảnh quá tối. Xe, người và mép đường khó quan sát.",2026-11-14T09:18:28+00:00
+7,img_17_3,11.523671,dark,RECAPTURE,day,images/img_17_3.jpg,Codex (rà ảnh theo yêu cầu của Trương Tuấn Vũ),approve,,Nhiều vùng gần đen. Người đi bộ và phương tiện khó tách khỏi nền.,2026-11-14T09:18:28+00:00
+8,img_01_2,4.680468,dark,RECAPTURE,night,images/img_01_2.jpg,Codex (rà ảnh theo yêu cầu của Trương Tuấn Vũ),approve,,"Dù là cảnh đêm, phần mặt đường và người đi bộ quá tối so với mức cần để quan sát.",2026-11-14T09:18:28+00:00
+9,img_17_2,2.152778,glare,RECAPTURE,day,images/img_17_2.jpg,Codex (rà ảnh theo yêu cầu của Trương Tuấn Vũ),approve,,Quầng lóa trắng lớn che phần đường và vùng cạnh phương tiện.,2026-11-14T09:18:28+00:00
+10,img_05_3,1.857639,glare,RECAPTURE,day,images/img_05_3.jpg,Codex (rà ảnh theo yêu cầu của Trương Tuấn Vũ),approve,,Vùng lóa cục bộ quanh xe làm mất chi tiết ở cụm phương tiện.,2026-11-14T09:18:28+00:00
+11,img_06_2,1.249688,compression,RECAPTURE,night,images/img_06_2.jpg,Codex (rà ảnh theo yêu cầu của Trương Tuấn Vũ),approve,,"Mảng vuông và đốm quanh xe, nhà và đèn làm mất chi tiết biên.",2026-11-14T09:18:28+00:00
+12,img_05_2,1.121192,compression,RECAPTURE,day,images/img_05_2.jpg,Codex (rà ảnh theo yêu cầu của Trương Tuấn Vũ),approve,,"Nhiễu dạng khối rõ trên nền và quanh cụm xe, biển số biến dạng.",2026-11-14T09:18:28+00:00
+13,img_23_2,1.08686,compression,RECAPTURE,day,images/img_23_2.jpg,Codex (rà ảnh theo yêu cầu của Trương Tuấn Vũ),approve,,"Viền xe, người đi bộ và biển báo vỡ thành khối.",2026-11-14T09:18:28+00:00
+14,img_01_3,1.023038,compression,RECAPTURE,night,images/img_01_3.jpg,Codex (rà ảnh theo yêu cầu của Trương Tuấn Vũ),approve,,"Mảng khối lớn ở vùng tối, biên xe và đèn biến dạng.",2026-11-14T09:18:28+00:00
+15,img_13_2,0.930747,none,KEEP,night,images/img_13_2.jpg,Codex (rà ảnh theo yêu cầu của Trương Tuấn Vũ),edit,RECAPTURE,Mảng khối và viền răng cưa rõ quanh các xe ở tiền cảnh dù PoC gợi ý KEEP.,2026-11-14T09:18:28+00:00
+16,img_16_3,0.755349,none,KEEP,day,images/img_16_3.jpg,Codex (rà ảnh theo yêu cầu của Trương Tuấn Vũ),edit,RECAPTURE,"Biên xe xanh, nhà và biển đỏ có quầng viền và nhiễu khối dù PoC gợi ý KEEP.",2026-11-14T09:18:28+00:00
+17,img_03_3,0.71685,none,KEEP,night,images/img_03_3.jpg,Codex (rà ảnh theo yêu cầu của Trương Tuấn Vũ),edit,RECAPTURE,"Các đốm, mảng khối và biên không đều quanh đèn, xe và người làm giảm chi tiết dù PoC gợi ý KEEP.",2026-11-14T09:18:28+00:00
+18,img_06_0,0.685453,none,KEEP,night,images/img_06_0.jpg,Codex (rà ảnh theo yêu cầu của Trương Tuấn Vũ),approve,,"Ảnh đêm nhưng vẫn ra được hình xe, người đi bộ và vạch đường.",2026-11-14T09:18:28+00:00
+19,img_06_1,0.68368,none,KEEP,night,images/img_06_1.jpg,Codex (rà ảnh theo yêu cầu của Trương Tuấn Vũ),approve,,"Cảnh đêm còn rõ đường viền xe, người và biển báo.",2026-11-14T09:18:28+00:00
+20,img_23_0,0.643005,none,KEEP,day,images/img_23_0.jpg,Codex (rà ảnh theo yêu cầu của Trương Tuấn Vũ),approve,,"Cảnh ban ngày rõ các xe, người đi bộ và mép đường.",2026-11-14T09:18:28+00:00

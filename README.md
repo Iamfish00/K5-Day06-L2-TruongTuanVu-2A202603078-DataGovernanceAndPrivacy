@@ -7,6 +7,8 @@ vấn đề, baseline, thuật toán, đánh giá trung thực, human-in-the-loo
 > Repo **không** chứa lời giải. `src/pipeline.py` là file nhóm sở hữu; mọi thuật toán (kể cả baseline) do nhóm tự cài.
 > Tài liệu học tập, không thay tư vấn pháp lý.
 
+G04 dùng **T01** trong cấu hình và hồ sơ chính. Các track đã tích hợp có thể chạy riêng bằng `--track` và chọn thư mục `--output` riêng. T12 của Võ Nguyễn Thành Phát dùng cấu hình nhóm **G08**. [Báo cáo theo track](reports/README.md)
+
 ## 1. Quickstart (≤ 5 phút, chạy offline)
 
 ```bash

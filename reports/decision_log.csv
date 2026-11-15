@@ -1,0 +1,5 @@
+ts,scope,status,canonical,reason_code,reason,owner,evidence
+2026-11-14T08:16:15+00:00,t01,HOLD,HOLD,REVIEW_PENDING,The priority coverage cells need reviewer approval or a documented capture edit.,Truong Tuan Vu - learner,pick.csv;coverage.csv;capture_plan.csv;review_queue.csv
+2026-11-14T08:17:42+00:00,t01,HOLD,HOLD,REVIEW_PENDING,The priority coverage cells need reviewer approval or a documented capture edit.,Truong Tuan Vu - learner,pick.csv;coverage.csv;capture_plan.csv;review_queue.csv
+2026-11-14T08:35:04+00:00,t01,HOLD,HOLD,REVIEW_PENDING,The priority coverage cells need reviewer approval or a documented capture edit.,Truong Tuan Vu - learner,pick.csv;coverage.csv;capture_plan.csv;review_queue.csv
+2026-11-14T09:03:22+00:00,t01,REWORK,REWORK,COVERAGE_GAPS,The reviewed plan still has coverage gaps according to candidate metadata.,Truong Tuan Vu - learner,pick.csv;coverage.csv;capture_plan.csv;review_queue.csv

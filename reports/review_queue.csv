@@ -1,0 +1,4 @@
+﻿rank,item_id,score,reason,suggested_action,slice,evidence_path,reviewer,reviewer_decision,override_value,review_note,reviewed_at
+1,C13,15.0,NO_METADATA_MATCH_IN_POOL,REVIEW_CAPTURE_GAP,urban / fog / night / pedestrian,coverage.csv,Trương Tuấn Vũ,edit,"Xác minh tag ánh sáng của clip_093. Nếu vẫn thiếu, thu cảnh đô thị có sương mù ban đêm và người đi bộ.",Pool hiện có 0 clip khớp đủ 4 điều kiện. clip_093 có tag ánh sáng unknown.,2026-11-14T09:03:20+00:00
+2,C15,14.0,NO_METADATA_MATCH_IN_POOL,REVIEW_CAPTURE_GAP,alley / rain / dusk / pedestrian,coverage.csv,Trương Tuấn Vũ,edit,"Thu cảnh trong hẻm, trời mưa lúc chạng vạng, có người đi bộ.",Pool hiện có 0 clip khớp đủ 4 điều kiện. clip_027 và clip_084 đều ghi day.,2026-11-14T09:03:20+00:00
+3,C09,13.0,VERIFY_COVERAGE,VERIFY,urban / rain / night / motorbike,coverage.csv,Trương Tuấn Vũ,approve,,Giữ clip_108 trong danh sách PoC vì 4 tag khớp theo CSV. Chưa xác minh nội dung bằng video.,2026-11-14T09:03:20+00:00

@@ -1,2 +1,6 @@
 member,git_author_name,git_email,role,modules_files,commit_shas,evidence_note,presenter
-Dang Minh Huy (MSSV 2A202603162),,,Lead / Integrator + Core algorithm + QA + review/report,src/tracks/t06_gate.py; src/tracks/t07_redaction.py; src/tracks/t08_deletion.py; src/tracks/baselines.py; src/pipeline.py; tests/test_group_pipelines.py; configs/lab.yaml; reports/group_report.md,,,Nguoi thuc thi duy nhat cua bai lab (tracks T06, T07, T08),yes
+Trương Tuấn Vũ (G04),Truong Tuan Vu,Iamfish00@users.noreply.github.com,T01–T02 và tích hợp,"src/pipeline.py, báo cáo T01 và T02",44a6cd7,Đối chiếu lịch sử Git,
+Hà Thanh Tùng (G04),Ha Thanh Tung,tunggc.161@gmail.com,T03,"src/t03_generator.py, src/pipeline_t03.py và baseline dev",bee7fb7,Đối chiếu lịch sử Git,
+Đặng Minh Huy (G04),Huy,ldang2563@gmail.com,T06–T08,"src/tracks/t06_gate.py, t07_redaction.py, t08_deletion.py",dcbf54b,Đối chiếu lịch sử Git,
+Phạm Trọng Hiện (G04),Phạm Trọng Hiện,hienphamtm74@gmail.com,T09,"src/t09.py, hai baseline và tests/test_t09.py",620c9e3,Đối chiếu lịch sử Git,
+Võ Nguyễn Thành Phát (G08),phoebin,vonguyenthanhphat2905@gmail.com,T12,"src/pipeline_t12.py, configs/lab_t12.yaml",2ebaaaf,Bài G08 tích hợp để tham chiếu,

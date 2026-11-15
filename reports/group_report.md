@@ -1,162 +1,138 @@
-# Group Report — Day 06 Data Lab (Field-to-Release PoC)
-
-> Điền đầy đủ, cụ thể, không viết chung chung. Mọi con số phải lấy từ file do script sinh ra
-> (`reports/metrics_*.json`, `reports/table1_baseline_vs_poc.md`) — không gõ tay, không làm tròn mất đơn vị.
-> 3–5 trang (hoặc README + report.md tương đương).
+# Group Report — Day 06 Data Lab
 
 ## 00 · Header
 
 | Mục | Giá trị |
 |---|---|
 | Group ID | G04 |
-| Challenge | T06 · Semantic Integrity & Provenance Gate · T07 · Face/Plate Redaction + Review Queue · T08 · Retention & Delete Request Simulator |
-| Thành viên (5–6) + vai trò | 1. Đặng Minh Huy — MSSV 2A202603162 (thực thi toàn bộ: Lead/Integrator, core algorithm T06–T08, baseline, tests, review + report) |
-| Git URL | https://github.com/Iamfish00/K5-Day06-L2-TruongTuanVu-2A202603078-DataGovernanceAndPrivacy |
-| Tag `demo-180m` (commit) | ____ |
-| Tag `final-24h` (commit) | ____ |
-| Deadline (giờ VN) | ____ |
+| Challenge | T01 · Coverage Planner |
+| Thành viên và vai trò | Trương Tuấn Vũ (T01–T02), Hà Thanh Tùng (T03), Đặng Minh Huy (T06–T08), Phạm Trọng Hiện (T09) |
+| Git URL | [Repo Day06](https://github.com/Iamfish00/K5-Day06-L2-TruongTuanVu-2A202603078-DataGovernanceAndPrivacy) |
+| Tag `demo-180m` (commit) | |
+| Tag `final-24h` (commit) | |
+| Deadline (giờ VN) | |
 
 ## 01 · Problem statement
 
-- Ai bị ảnh hưởng / ai chịu hậu quả khi hệ thống sai? ____
-- Điểm nghẽn cụ thể: ____
-- Đầu vào → đầu ra: ____
-- Tiêu chí GO / HOLD / REWORK (chốt trước khi chạy eval): ____
-- Giả định của nhóm (cần DPO/legal/domain owner xác nhận): ____
+- Nhóm thu dữ liệu tốn chi phí quay lại nếu chọn nhiều clip cùng kịch bản. Nhóm kiểm thử mô hình cũng thiếu bằng chứng ở các cảnh rủi ro mà bộ dữ liệu chưa phủ.
+- Với ngân sách K clip, ưu tiên phủ các ô chưa có mà có tổng trọng số cao, rồi xác định cảnh cần xác minh hoặc quay thêm.
+- Đầu vào gồm danh sách clip và bảng ô mục tiêu. Đầu ra gồm `pick.csv`, `coverage.csv`, hàng đợi duyệt, `capture_plan.csv` và `decision.json`.
+- Pipeline đưa ra `HOLD` khi còn mục chưa được duyệt, `REWORK` khi duyệt xong nhưng còn ô thiếu và `GO` khi đã duyệt và metadata phủ toàn bộ ô mục tiêu. `GO` chỉ áp dụng cho kế hoạch trong lab.
+- Chi phí trong `cost_min` là ước tính của fixture. Việc xin quyền quay và xử lý dữ liệu thật cần xác nhận trước khi thu.
 
 ## 02 · Data & provenance
 
-| Split | N | Nguồn / link | License | Synthetic? |
-|---|---|---|---|---|
-| dev | | | | |
-| eval / heldout | | | | |
+| Split | N | Nguồn | License | Synthetic |
+|---|---:|---|---|---|
+| Tập chính | 120 clip | `candidates.csv`, fixture Day06, seed 42 | CC0-1.0 | Có |
+| Holdout | 25 clip | `holdout_candidates.csv`, fixture Day06, seed 42 | CC0-1.0 | Có |
+| Ô mục tiêu | 15 ô | `targets.csv`, cùng bộ ô cho hai pool | CC0-1.0 | Có |
 
-- Schema & class mapping: ____
-- Seed: 42 · Cách chia split (theo scene/group/segment?): ____
-- `manifest.csv` verified (sha256): có / không — lệnh: `python -m tools.verify_manifests`
-- Dữ liệu thật dùng (nếu có) và cách xây GT cho nó: ____
+- Clip được mô tả qua `route`, `weather`, `light` và `object`. Trọng số gắn với ô trong `targets.csv`. Ký hiệu `*` trong ô chấp nhận mọi giá trị ở chiều tương ứng. Tag `unknown` chỉ khớp khi chiều mục tiêu là `*`.
+- Dùng hai danh sách đã tách sẵn. Giữ trọng số gốc và seed 42 trên mọi lần chạy. Không dùng dữ liệu người thật.
+- Đã kiểm SHA-256 của ba file bằng `tools.verify_manifests`. SHA-256 của manifest là `ba2c4ea11bf6a4a1d9ce367cad3967b278ec147f2b754d69304e7a7b812439b0`. [Manifest](../fixtures/t01_coverage/manifest.csv)
 
 ## 03 · Research & design
 
-- 2–3 references (URL + ngày xem) và **vì sao** chọn kỹ thuật: ____
-- Sơ đồ data flow (input → process → rank/QC → review → decision → report): ____
-- Thành phần offline (model/weights + checksum + license nếu có): ____
-- Trade-offs đã cân nhắc: ____
+- Kiểm manifest → ghép clip với ô mục tiêu → chọn clip theo trọng số tăng thêm → đưa 3 ô cần xem xét vào hàng đợi → ghi quyết định và kế hoạch quay.
+- Ý tưởng greedy set cover cung cấp phương pháp chọn ô chưa được phủ. BDD100K minh họa cách phân tích độ đa dạng bối cảnh lái xe qua điều kiện môi trường. [Chvátal](https://doi.org/10.1287/moor.4.3.233) · [Yu và cộng sự](https://arxiv.org/abs/1805.04687)
+- PoC phá hòa theo thứ tự kịch bản chưa chọn, chi phí thấp hơn và `clip_id`. Cách này giữ mục tiêu tăng độ phủ ở từng bước và có thể giảm trùng hoặc giảm chi phí. Greedy đưa ra một phương án theo từng bước, chưa chứng minh tối ưu toàn cục.
+- Chạy offline bằng CPU, đọc CSV và dùng quy tắc cố định. Không có model hay checkpoint.
 
 ## 04 · Baseline vs PoC
 
-- Baseline (mô tả, version/config, commit): ____
-- PoC (mô tả, version/config, commit): ____
-- Cùng budget / cùng heldout / cùng seed: xác nhận ____
+Ba phương pháp dùng cùng pool, ngân sách, tập mục tiêu và seed 42. Random lấy K clip theo điểm ngẫu nhiên. Greedy cơ sở ưu tiên tổng trọng số ô mới và dùng `clip_id` để phá hòa. PoC dùng cùng tiêu chí độ phủ, thêm ưu tiên kịch bản khác và chi phí. Mã nguồn của lượt chạy ban đầu dựa trên `b0ce8bf`. Bản tích hợp có commit `44a6cd7`.
 
-**Bảng 1 · Baseline vs PoC & hard slices** — dán output của
-`python -m src.compare reports/metrics_baseline.json reports/metrics_poc.json`:
+**Độ phủ trọng số tính từ metadata đầu vào**, lấy từ CSV do script sinh. Bảng điểm xác minh chờ GT của giảng viên.
 
-| Metric (unit) | Baseline | PoC | Δ & chú thích |
-|---|---|---|---|
-| Primary: ______ | ____ | ____ | ____; higher/lower? |
-| Hard-slice: ______ | ____ | ____ | ____; N=__ |
-| Review@B / miss / FP | ____ | ____ | ____; B=__ |
-| Runtime / 100 items | ____ | ____ | ____; CPU=__ |
+| Pool và ngân sách | Random | Greedy | PoC |
+|---|---:|---:|---:|
+| main, K=10 | 8.33% (4/48) | 72.92% (35/48) | 72.92% (35/48) |
+| main, K=20 | 27.08% (13/48) | 81.25% (39/48) | 81.25% (39/48) |
+| main, K=30 | 37.50% (18/48) | 81.25% (39/48) | 81.25% (39/48) |
+| holdout, K=6 | 14.58% (7/48) | 39.58% (19/48) | 39.58% (19/48) |
+
+| Chỉ số trên pool chính, K=30 | Random | Greedy | PoC |
+|---|---:|---:|---:|
+| Ô được phủ | 7/15 | 13/15 | 13/15 |
+| Ô khó được phủ | 1/4 | 4/4 | 4/4 |
+| Clip trùng kịch bản | 12 | 7 | 0 |
+| Chi phí thu | 232 phút | 266 phút | 138 phút |
+| Chi phí / ô được phủ | 33.14 phút/ô | 20.46 phút/ô | 10.62 phút/ô |
+| Thời gian pipeline / 100 clip | 29.8 ms | 50.4 ms | 54.4 ms |
+
+PoC và greedy đạt cùng độ phủ metadata ở cả bốn thiết lập đã chạy. PoC giảm chi phí dự kiến trên pool chính K=30 từ 266 xuống 138 phút và số kịch bản trùng từ 7 xuống 0. Trên holdout, PoC phủ 2/4 ô khó theo metadata.
+
+[Biểu đồ so sánh](../demo/t01_coverage.png)
 
 ## 05 · Evaluation protocol
 
-- Công thức primary metric, đơn vị đánh giá, TP/FP/FN, denominator: ____ (xem `reports/metric_contract.md`)
-- Threshold / budget B / K và lúc chốt: ____
-- Độ bất định (CI/bootstrap/variance) khi N nhỏ: ____
-- Lệnh evaluate chính xác: `python -m src.evaluate --track t__ --pred ... --out ...`
+- Mỗi đơn vị đánh giá là một ô mục tiêu. Chỉ tính trọng số mỗi ô một lần dù nhiều clip khớp.
+- Độ phủ trên metadata dùng tag đầu vào. Weighted Coverage@K chính thức dùng tag đã xác minh. Ghép `clip_id` trong đầu ra với bảng xác minh, rồi so 4 chiều của clip với ô hoặc wildcard.
+- Tập chính K=10, 20, 30. Holdout K=6. Hàng đợi người duyệt B=3. Cùng seed và ngân sách cho các phương pháp.
+- Thử nghiệm dùng mỗi cấu hình một lượt và giữ nguyên phương pháp khi chạy holdout. Chưa có ước tính khoảng tin cậy. Với 4 ô khó, cần báo cả số đếm và tỷ lệ.
+- Chạy `src.evaluate` với `pick.csv` sau khi có GT. Lệnh cho holdout thêm `--gt fixtures/t01_coverage/gt/holdout_verified_tags.csv --k 6` và dùng file chọn clip của holdout. [Metric contract](metric_contract.md)
 
 ## 06 · Result slices
 
-| Slice | N | Baseline | PoC | Ghi chú |
-|---|---|---|---|---|
-| | | | | |
-| | | | | |
+| Slice | N ô | Random | Greedy | PoC |
+|---|---:|---:|---:|---:|
+| Ô khó, pool chính K=30 | 4 | 1/4 | 4/4 | 4/4 |
+| Ô khó, holdout K=6 | 4 | 1/4 | 2/4 | 2/4 |
 
-- Failure case 1 (ảnh/metadata + root cause): ____
-- Failure case 2: ____
-- Latency / compute (máy, CPU, ms/item): ____
+- C13 thiếu cảnh đô thị, sương mù, ban đêm có người đi bộ. `clip_093` có tag ánh sáng `unknown`, vì vậy chưa đủ bằng chứng để tính ô này là đã phủ.
+- C15 thiếu cảnh hẻm, trời mưa, chạng vạng có người đi bộ. `clip_027` và `clip_084` cùng có tag `day`, nên tăng số clip tương tự vẫn để sót ô chạng vạng.
+- C09 có `clip_108` khớp cả bốn chiều theo CSV. Fixture không có video để xác nhận nội dung và chỉ một clip khớp theo metadata, nên ưu tiên kiểm chứng trước khi dùng làm bằng chứng.
+- K=30 PoC chạy 0.0653 giây với 120 clip trên Intel Core i7-10610U, Windows 11, Python 3.14.5. Thời gian là một lần chạy pipeline và chưa gồm công mở Python hoặc thời gian reviewer.
 
 ## 07 · Human & decision
 
-- Review queue (file, B, cách ưu tiên): ____
-- Cách override + audit log (`out/audit_log.jsonl`): ____
-- Decision policy + `reason_code` + owner: ____
-- Khi nào HOLD/REWORK thay vì tự động release: ____
+Hàng đợi `out/poc/review_queue.csv` đưa ô còn thiếu lên trước, sau đó ưu tiên ô khó và trọng số. Mở `out/poc/contact_sheet.html` để xem các tag, clip khớp và xuất CSV đã duyệt.
+
+| Ô | Đề xuất | Người duyệt | Quyết định |
+|---|---|---|---|
+| C13 | Xác minh thời điểm `clip_093`. Nếu vẫn thiếu, thu một clip đô thị có sương mù ban đêm và người đi bộ. | Trương Tuấn Vũ | `edit` |
+| C15 | Thu clip hẻm trời mưa lúc chạng vạng, có người đi bộ. | Trương Tuấn Vũ | `edit` |
+| C09 | Xác minh `clip_108`. Nếu không đạt, thu một clip dự phòng về xe máy trong đô thị trời mưa ban đêm. | Trương Tuấn Vũ | `approve` |
+
+- Lưu quyết định thành `out/poc/review_queue_reviewed.csv`. Với `edit`, nhập hành động mới vào `override_value`. Sau khi chạy lại, pipeline ghi `audit_log.jsonl` và áp dụng thay đổi vào `capture_plan.csv` của ô thiếu.
+- Pipeline đã ghi ba quyết định vào `audit_log.jsonl`. Kết quả `REWORK / COVERAGE_GAPS` vì C13 và C15 còn thiếu clip theo metadata. Bản rà dựa trên metadata do Codex điền theo yêu cầu của Trương Tuấn Vũ, người phụ trách review. C09 giữ `clip_108` theo CSV và chưa xác minh bằng video. [Bảng review](review_queue.csv) · [Nhật ký quyết định](decision_log.csv)
 
 ## 08 · Reproduce & tests
 
-```bash
-make setup          # hoặc: python -m venv .venv && pip install -r requirements.txt
-python -m src.main --input fixtures/<track> --config configs/lab.yaml --output out/ --offline --seed 42
-python -m src.evaluate --track t__ --pred out/<file> --out reports/metrics_poc.json
-pytest -q
+```powershell
+.\.venv\Scripts\python.exe -m tools.verify_manifests fixtures/t01_coverage
+.\.venv\Scripts\python.exe -m src.main --config configs/lab.yaml --track t01 --output out/poc --run-name poc --offline --seed 42
+.\.venv\Scripts\python.exe -m src.main --track t01 --pipeline src.examples.random_baseline --output out/baseline --run-name baseline --offline --seed 42
+.\.venv\Scripts\python.exe -m src.evaluate --track t01 --pred out/poc/pick.csv --run-name poc --out reports/metrics_poc.json
+.\.venv\Scripts\python.exe -m pytest -o addopts="" -q
 ```
 
-- Output của `pytest -q`: ____
-- Máy / CPU / OS / Python: ____ · git sha: ____
+- Kiểm thử thực tế · 49 pass, 39 skip vì thiếu GT, 0 fail. Hai test T01 kiểm tra đủ K clip, ô thiếu và từ chối dòng `edit` chưa có nội dung thay thế. Bộ test sau tích hợp có 65 đạt, 39 bỏ qua và 0 lỗi.
+- `src.evaluate` cần gói nhãn giảng viên. Khi có GT, chạy tương tự cho `out/baseline/pick.csv` với `--run-name baseline --out reports/metrics_baseline.json`, sau đó chạy `src.compare`.
 
 ## 09 · Limitations & ethics
 
-- Rủi ro pháp lý / PII / license: ____
-- Điều chưa biết; false alarms; nếu scale 10× thì sao: ____
-- Không tuyên bố "đạt GDPR / luật Việt Nam" từ checklist tự động; giả định cần DPO/legal xác nhận: ____
-- Kế hoạch cải tiến: ____
+- Fixture chỉ gồm CSV tổng hợp. Tag thiếu hoặc sai có thể làm phủ giả hoặc bỏ sót ô. Điểm theo metadata không đo được độ chính xác này.
+- Với pool lớn hơn, có thể lập chỉ mục clip theo các chiều kịch bản và chỉ cập nhật điểm tăng thêm của clip liên quan khi phủ một ô mới. Đo lại thời gian và giữ hàng đợi duyệt có ngân sách cố định.
+- Với dữ liệu thật, cần xác nhận quyền quay, thời hạn giữ dữ liệu và cách xử lý mặt người, biển số hoặc định danh khác trước khi chia sẻ.
 
 ## 10 · Team contribution
 
-**Bảng 2 · Individual contribution evidence** (đối chiếu với `git shortlog -sne --all` và `reports/team_contributions.csv`)
+| Thành viên | Nhóm | Phần việc | Commit đối chiếu |
+|---|---|---|---|
+| Trương Tuấn Vũ | G04 | T01–T02 và tích hợp | `44a6cd7` |
+| Hà Thanh Tùng | G04 | T03 | `bee7fb7` |
+| Đặng Minh Huy | G04 | T06–T08 | `dcbf54b` |
+| Phạm Trọng Hiện | G04 | T09 | `620c9e3` |
+| Võ Nguyễn Thành Phát | G08 | T12 | `2ebaaaf` |
 
-| Học viên | Git author/email | Module / vai trò | Commit SHA / diff chứng minh | Trình bày? |
-|---|---|---|---|---|
-| Member 1 | | Integration / CLI | | |
-| Member 2 | | Data + GT | | |
-| Member 3 | | Core algorithm | | |
-| Member 4 | | Metric + tests | | |
-| Member 5 | | Review queue + report | | |
-| Member 6 (nếu có) | | Research / ablation / debate | | |
+Phần T12 của G08 có báo cáo riêng. [Báo cáo T12](t12_report.md) · [Bảng đóng góp](team_contributions.csv)
 
 ## 11 · References
 
-| URL | Ngày xem | 1–2 dòng ý nghĩa (không chép nguyên văn) |
+| Nguồn | Ngày xem | Dùng trong lab |
 |---|---|---|
-| | | |
-
----
-
-**Bảng 3 · Checklist chốt khi nộp**
-
-- [ ] Link repo và tag cuối cùng trong README; input mẫu không chứa PII thật.
-- [ ] Đúng 1 lệnh run, 1 lệnh evaluate, 1 lệnh tests; không cần download khi chạy.
-- [ ] Có baseline/PoC metrics, ≥1 failure case, reviewer evidence, decision log.
-- [ ] Có license/source provenance, data splits, seed, offline environment, GT/eval N.
-- [ ] Mỗi thành viên có ≥1 commit thực chất và được nêu minh bạch trong bảng trên.
-
-## 12 · Execution summary — người thực thi: Đặng Minh Huy (Dang Minh Huy), MSSV 2A202603162, nhóm G04
-
-Ba challenge đã cài đầy đủ 5 bước contract (load → process → rank → review → decide) trong
-`src/tracks/` (dispatch từ `src/pipeline.py`):
-
-| Track | PoC module | Thuật toán | Output |
-|---|---|---|---|
-| T06 | `src/tracks/t06_gate.py` | So invariant semantic với parent `releases/v1.0` + lịch sử label map: trùng ID, category so với label map khai báo (stale_map / class_swap), frame rơi / `frame_index` đứt quãng, bbox dịch chuyển có hệ thống (ngưỡng chốt trước: ≥10% box chung dịch, mean ≥3 px; jitter lành tính <1 px), sha256 parent | `out/t06/poc/release_decisions.csv` (+ `release_report.json` máy đọc được) |
-| T07 | `src/tracks/t07_redaction.py` | Detector CPU không weights: khớp palette da tổng hợp (ngày + đêm) → blob mặt (kèm heuristic mắt-thấp = mặt bị che → nới box xuống); rectangle sáng = biển số `SYN-…`; pad 2 px; blur Gaussian vùng che; queue ưu tiên vùng nhỏ/tối/bị che | `out/t07/poc/redactions.csv`, `out/t07/poc/redacted/*.jpg`, `contact_sheet.html` |
-| T08 | `src/tracks/t08_deletion.py` | BFS lineage (raw → backup/frame/crop/embedding/export) theo `subject_ids` + `parent_ids`; chuỗi ưu tiên chốt trước: legal hold → retain_legal_hold, unknown origin / ACL thiếu owner → escalate, đa chủ thể → escalate, còn lại delete; mọi hành động ghi `audit_log.jsonl` | `out/t08/poc/actions.csv`, `deletion_evidence.csv` |
-
-Baseline tầm thường (docs §4) trong `src/tracks/baselines.py`: T06 chỉ parse schema (mọi release PASS),
-T07 detector màu thô (da YCrCb + pixel sáng, pad cố định — OpenCV 5.0 đã bỏ API Haar cascade) + blur cố định không queue (và mode `blur_all` = baseline tầm thường phải báo: miss rate 0 nhưng over-redaction = 1 → guardrail FAIL),
-T08 chỉ xóa 1 raw theo filename, bỏ qua derived/backup.
-
-Lệnh chạy (offline, seed 42):
-
-```bash
-.venv\Scripts\python.exe -m src.main --track t06 --output out/t06/poc --run-name poc --offline --seed 42
-.venv\Scripts\python.exe -m src.main --track t07 --output out/t07/poc --run-name poc --offline --seed 42
-.venv\Scripts\python.exe -m src.main --track t08 --output out/t08/poc --run-name poc --offline --seed 42
-.venv\Scripts\python.exe -m src.main --track t06 --pipeline src.tracks.baselines --output out/t06/baseline --run-name baseline --offline --seed 42   # t07/t08 tương tự
-```
-
-Metrics chấm chính thức (`src.evaluate`) cần `fixtures/*/gt/` của overlay giảng viên — repo học viên
-không có gt/ nên số liệu primary sẽ do giảng viên chạy; nhóm tự kiểm bằng test đơn vị
-(`tests/test_group_pipelines.py`: 9 case success + failure/edge cho cả 3 track) và review thủ công
-contact sheet T07. Ngưỡng/tham số đều chốt trước khi có bất kỳ kết quả eval nào (không có gt để tune).
+| [Chvátal, A Greedy Heuristic for the Set-Covering Problem](https://doi.org/10.1287/moor.4.3.233) | 2026-11-14 | Tham khảo cách chọn theo tập ô chưa phủ và chi phí. |
+| [Yu và cộng sự, BDD100K](https://arxiv.org/abs/1805.04687) | 2026-11-14 | Tham khảo ý nghĩa của đa dạng bối cảnh trong dữ liệu lái xe. |
+| [Đề T01](../docs/tracks/T01.md) | 2026-11-14 | Quy định input, ngân sách, output và cách đo coverage. |

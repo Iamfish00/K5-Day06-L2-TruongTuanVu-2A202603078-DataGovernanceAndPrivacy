@@ -1,0 +1,3 @@
+ts,scope,status,canonical,reason_code,reason,owner,evidence
+2026-11-14T09:11:04+00:00,t02:eval,HOLD,HOLD,REVIEW_PENDING,The priority images need a completed human review.,Truong Tuan Vu - learner,ranked_review.csv;review_queue.csv
+2026-11-14T09:18:30+00:00,t02:eval,RECAPTURE,REWORK,CONFIRMED_IMAGE_DEFECTS,The reviewer flagged priority images for recapture.,Truong Tuan Vu - learner,ranked_review.csv;review_queue.csv;review_queue_reviewed.csv;review_actions.csv
