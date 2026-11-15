@@ -6,7 +6,7 @@
 |---|---|
 | Group ID | G04 |
 | Challenge | T01 · Coverage Planner |
-| Thành viên và vai trò | Trương Tuấn Vũ (T01–T02), Hà Thanh Tùng (T03), Đặng Minh Huy (T06–T08), Phạm Trọng Hiện (T09) |
+| Thành viên và vai trò | Trương Tuấn Vũ (G04, T01–T02 và báo cáo), Hà Thanh Tùng (G04, T03–T05), Đặng Minh Huy (G04, T06–T08), Phạm Trọng Hiện (G04, T09–T11), Võ Nguyễn Thành Phát (G08, T12–T14) |
 | Git URL | [Repo Day06](https://github.com/Iamfish00/K5-Day06-L2-TruongTuanVu-2A202603078-DataGovernanceAndPrivacy) |
 | Tag `demo-180m` (commit) | |
 | Tag `final-24h` (commit) | |
@@ -121,13 +121,30 @@ Hàng đợi `out/poc/review_queue.csv` đưa ô còn thiếu lên trước, sau
 
 | Thành viên | Nhóm | Phần việc | Commit đối chiếu |
 |---|---|---|---|
-| Trương Tuấn Vũ | G04 | T01–T02 và tích hợp | `44a6cd7` |
-| Hà Thanh Tùng | G04 | T03 | `bee7fb7` |
+| Trương Tuấn Vũ | G04 | T01–T02 và báo cáo | `44a6cd7` |
+| Hà Thanh Tùng | G04 | T03–T05 | `bee7fb7` |
 | Đặng Minh Huy | G04 | T06–T08 | `dcbf54b` |
-| Phạm Trọng Hiện | G04 | T09 | `620c9e3` |
-| Võ Nguyễn Thành Phát | G08 | T12 | `2ebaaaf` |
+| Phạm Trọng Hiện | G04 | T09–T11 | `620c9e3` |
+| Võ Nguyễn Thành Phát | G08 | T12–T14 | `2ebaaaf` |
 
-Phần T12 của G08 có báo cáo riêng. [Báo cáo T12](t12_report.md) · [Bảng đóng góp](team_contributions.csv)
+Cột commit đối chiếu ghi các commit gốc của từng thành viên. Mã triển khai bổ sung cho T04, T05, T10, T11, T13 và T14 nằm trong commit `fc71294`. [Bảng đóng góp](team_contributions.csv)
+
+### T12
+
+**Vendor Batch Acceptance** · Võ Nguyễn Thành Phát (G08)
+
+Tập dữ liệu offline có 5 batch, mỗi batch 100 mẫu. PoC lấy 20 mẫu mỗi batch theo hai tầng rủi ro. Baseline lấy ngẫu nhiên đơn giản 20 mẫu mỗi batch. Cả hai dùng seed 42 và ngưỡng lỗi 5% từ policy. [Cấu hình G08](../configs/lab_t12.yaml)
+
+Mỗi lượt chạy sinh `audit_sample.csv`, `batch_decisions.csv`, trang review và nhật ký. Bản học viên hiện ở `HOLD / NO_AUDIT_LABELS` trên cả 5 batch và có `n_audited=0`. Các ước lượng để trống khi thiếu bằng chứng. Nhãn giả trong test làm cả 5 batch cần làm lại, và chính sách tổng trả `REWORK`. Ca này chỉ kiểm logic tổng hợp.
+
+PoC ước lượng tỷ lệ lỗi theo trọng số tầng. Khi đánh giá điều kiện ACCEPT, nó lấy xác suất đuôi dưới lớn nhất trong các cách chia số lỗi tối thiểu của một batch xấu vào hai tầng. Khoảng Wilson theo cỡ mẫu hiệu dụng là xấp xỉ. Với 20 mẫu, ngay cả khi chưa thấy lỗi vẫn có thể phải HOLD. Chấm MAE, Bad-batch Recall và guardrail HOLD rate cần nhãn audit/GT thật.
+
+```powershell
+.\.venv\Scripts\python.exe -m src.main --config configs/lab_t12.yaml --track t12 --output out/t12/poc --offline --seed 42
+.\.venv\Scripts\python.exe -m src.main --config configs/lab_t12.yaml --track t12 --pipeline src.tracks.baselines --output out/t12/baseline --offline --seed 42
+```
+
+Người audit có thể nhập cặp `sample_id,is_error` của đúng kế hoạch mỗi phương pháp vào `audit_labels.csv` trong thư mục lượt chạy tương ứng. Giảng viên có thể dùng `AuditOracle` với bộ nhãn của lớp. Trang `contact_sheet.html` hỗ trợ ghi lại quyết định và lý do của người duyệt. [T12](../docs/tracks/T12.md)
 
 ## 11 · References
 

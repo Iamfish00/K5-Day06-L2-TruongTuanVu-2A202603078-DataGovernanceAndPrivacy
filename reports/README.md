@@ -30,6 +30,6 @@ Hồ sơ chính của G04 dùng T01, gồm `group_report.md`, `metric_contract.m
 | [T09](t09_report.md) | | |
 | [T10](additional_tracks.md) | | |
 | [T11](additional_tracks.md) | | |
-| [T12 · G08](t12_report.md) | | |
+| [T12 · G08](group_report.md#t12) | | |
 | [T13](additional_tracks.md) | | |
 | [T14](additional_tracks.md) | | |
