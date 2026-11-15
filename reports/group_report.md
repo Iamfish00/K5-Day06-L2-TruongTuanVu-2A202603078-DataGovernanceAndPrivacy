@@ -89,14 +89,14 @@ PoC và greedy đạt cùng độ phủ metadata ở cả bốn thiết lập đ
 
 Hàng đợi `out/poc/review_queue.csv` đưa ô còn thiếu lên trước, sau đó ưu tiên ô khó và trọng số. Mở `out/poc/contact_sheet.html` để xem các tag, clip khớp và xuất CSV đã duyệt.
 
-| Ô | Đề xuất | Người duyệt | Quyết định |
+| Ô | Đề xuất | Người duyệt xác nhận | Quyết định trong lần chạy |
 |---|---|---|---|
-| C13 | Xác minh thời điểm `clip_093`. Nếu vẫn thiếu, thu một clip đô thị có sương mù ban đêm và người đi bộ. | Trương Tuấn Vũ | `edit` |
-| C15 | Thu clip hẻm trời mưa lúc chạng vạng, có người đi bộ. | Trương Tuấn Vũ | `edit` |
-| C09 | Xác minh `clip_108`. Nếu không đạt, thu một clip dự phòng về xe máy trong đô thị trời mưa ban đêm. | Trương Tuấn Vũ | `approve` |
+| C13 | Xác minh thời điểm `clip_093`. Nếu vẫn thiếu, thu một clip đô thị có sương mù ban đêm và người đi bộ. | | `edit` |
+| C15 | Thu clip hẻm trời mưa lúc chạng vạng, có người đi bộ. | | `edit` |
+| C09 | Xác minh `clip_108`. Nếu không đạt, thu một clip dự phòng về xe máy trong đô thị trời mưa ban đêm. | | `approve` |
 
 - Lưu quyết định thành `out/poc/review_queue_reviewed.csv`. Với `edit`, nhập hành động mới vào `override_value`. Sau khi chạy lại, pipeline ghi `audit_log.jsonl` và áp dụng thay đổi vào `capture_plan.csv` của ô thiếu.
-- Pipeline đã ghi ba quyết định vào `audit_log.jsonl`. Kết quả `REWORK / COVERAGE_GAPS` vì C13 và C15 còn thiếu clip theo metadata. Bản rà dựa trên metadata do Codex điền theo yêu cầu của Trương Tuấn Vũ, người phụ trách review. C09 giữ `clip_108` theo CSV và chưa xác minh bằng video. [Bảng review](review_queue.csv) · [Nhật ký quyết định](decision_log.csv)
+- Pipeline đã ghi ba quyết định vào `audit_log.jsonl`. Kết quả `REWORK / COVERAGE_GAPS` vì C13 và C15 còn thiếu clip theo metadata. Bản rà dựa trên metadata do Codex điền theo yêu cầu của Trương Tuấn Vũ. C09 giữ `clip_108` theo CSV và chưa xác minh bằng video. [Bảng review](review_queue.csv) · [Nhật ký quyết định](decision_log.csv)
 
 ## 08 · Reproduce & tests
 

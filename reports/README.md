@@ -17,7 +17,19 @@ Các file metrics/table **không được sửa tay** — giảng viên sẽ ch�
 
 Hồ sơ chính của G04 dùng T01, gồm `group_report.md`, `metric_contract.md`, `review_queue.csv` và `decision_log.csv`. Các báo cáo bên dưới lưu kèm để theo dõi phần việc theo từng người. Đầu ra chạy lại sinh trong `out/`.
 
-- G04 · [T02](t02_report.md), [T03](t03_report.md), [T06–T08](t06_t07_t08_report.md) và [T09](t09_report.md).
-- G08 · [T12 của Võ Nguyễn Thành Phát](t12_report.md).
-
-- [T04, T05, T10, T11, T13 và T14](additional_tracks.md) · PoC, baseline và các bước review bổ sung.
+| Track | Người duyệt xác nhận | Bộ nhãn giảng viên |
+|---|---|---|
+| [T01](group_report.md) | | |
+| [T02](t02_report.md) | | |
+| [T03](t03_report.md) | | |
+| [T04](additional_tracks.md) | | |
+| [T05](additional_tracks.md) | | |
+| [T06](t06_t07_t08_report.md) | | |
+| [T07](t06_t07_t08_report.md) | | |
+| [T08](t06_t07_t08_report.md) | | |
+| [T09](t09_report.md) | | |
+| [T10](additional_tracks.md) | | |
+| [T11](additional_tracks.md) | | |
+| [T12 · G08](t12_report.md) | | |
+| [T13](additional_tracks.md) | | |
+| [T14](additional_tracks.md) | | |
