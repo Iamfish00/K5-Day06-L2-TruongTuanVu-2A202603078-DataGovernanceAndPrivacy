@@ -127,6 +127,8 @@ Hàng đợi `out/poc/review_queue.csv` đưa ô còn thiếu lên trước, sau
 | Phạm Trọng Hiện | G04 | T09–T11 | `620c9e3` |
 | Võ Nguyễn Thành Phát | G08 | T12–T14 | `2ebaaaf` |
 
+**Ghi chú:** Võ Nguyễn Thành Phát thuộc nhóm **G08** và phụ trách T12–T14. Các thành viên còn lại trong bảng thuộc nhóm **G04**.
+
 Cột commit đối chiếu ghi các commit gốc của từng thành viên. Mã triển khai bổ sung cho T04, T05, T10, T11, T13 và T14 nằm trong commit `fc71294`. [Bảng đóng góp](team_contributions.csv)
 
 ### T12
