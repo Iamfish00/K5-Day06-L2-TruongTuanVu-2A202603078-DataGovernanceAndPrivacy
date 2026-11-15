@@ -19,3 +19,5 @@ Hồ sơ chính của G04 dùng T01, gồm `group_report.md`, `metric_contract.m
 
 - G04 · [T02](t02_report.md), [T03](t03_report.md), [T06–T08](t06_t07_t08_report.md) và [T09](t09_report.md).
 - G08 · [T12 của Võ Nguyễn Thành Phát](t12_report.md).
+
+- [T04, T05, T10, T11, T13 và T14](additional_tracks.md) · PoC, baseline và các bước review bổ sung.

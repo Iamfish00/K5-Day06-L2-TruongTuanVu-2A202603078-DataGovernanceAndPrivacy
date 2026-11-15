@@ -122,8 +122,14 @@ def run(ctx: RunContext) -> None:
 
         params = {**(ctx.config.get("params") or {}), "pipeline_t12_sampling": "random"}
         run_t12(replace(ctx, config={**ctx.config, "params": params}))
-    else:
+    elif ctx.track in {"t06", "t07", "t08"}:
         {"t06": _run_t06, "t07": _run_t07, "t08": _run_t08}[ctx.track](ctx)
+    else:
+        from . import REGISTRY
+
+        if ctx.track not in {"t04", "t05", "t10", "t11", "t13", "t14"}:
+            raise ValueError(f"No comparison baseline for {ctx.track} in this module")
+        REGISTRY[ctx.track].run(ctx, baseline=True)
     spec = get_track(ctx.track)
     ctx.stats["baseline"] = True
     ctx.stats["pred_file"] = spec.pred_file

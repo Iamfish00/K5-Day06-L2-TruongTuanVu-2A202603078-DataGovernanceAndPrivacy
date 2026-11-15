@@ -1,0 +1,10 @@
+group_id: G04
+owner: Truong Tuan Vu - learner
+track_config: tracks/t04.yaml
+track: t04
+output: out/t04/shock
+seed: 42
+offline: true
+strict_provenance: true
+params:
+  shock: true

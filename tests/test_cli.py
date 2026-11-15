@@ -15,7 +15,8 @@ from src.common.offline import NetworkBlockedError, disable_offline_guard, enabl
 
 
 def test_unsupported_track_fails_clearly_not_silently(tmp_path):
-    rc = runner.main(["--track", "t04", "--output", str(tmp_path), "--offline"])
+    rc = runner.main(["--track", "t03", "--pipeline", "src.examples.laplacian_baseline",
+                      "--output", str(tmp_path), "--offline"])
     assert rc == 3                                   # NotImplemented -> explicit exit code
     info = json.loads((tmp_path / "run_info.json").read_text())
     assert info["status"] == 3 and info["seed"] == 42
